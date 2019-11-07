@@ -1,0 +1,11 @@
+CREATE DATABASE hw5;
+USE hw5;
+GRANT ALL PRIVILEGES ON hw5.* TO 'user1'@'localhost' IDENTIFIED BY 'm5Lc%6+smj8yUJQV';
+
+#table stores Name(User input) and e-mail addresses ('Content',File input)
+CREATE TABLE contacts(
+    ID SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(30),
+    Content VARCHAR(255)
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+);

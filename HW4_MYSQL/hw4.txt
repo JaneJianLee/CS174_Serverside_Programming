@@ -1,0 +1,59 @@
+CREATE DATABASE hw4;
+USE hw4;
+GRANT ALL PRIVILEGES ON hw4.* TO 'devteamlead'@'localhost' IDENTIFIED BY 'dev';
+#I have made a admin user for the development team, but in the future, there will be an additional user which only has DML access inorder to prevent malicious attacks (drop)
+
+#1. Table videodata keeps a record of the video outputs of 900 cameras.
+CREATE TABLE videodata(
+	cameraid SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    videopath VARCHAR(256),
+    thumbpath VARCHAR(256),
+	hashbin BINARY(32)
+);
+#cameraid:
+#Each camera will have a unique camera id. By using SMALLINT data type, this table is scalable to support up to 65,000 cameras.
+#Since cameraid is primary key, videodata table will only keep record of one video per camera at the same time, not previous videos.
+#Pro of using auto_increment in this design is that it will be easy for a camera to insert a record at the first time.
+#Con of using auto_increment is that camera will need to know its cameraid beforehand inorder to make an update to its record.
+#Solution) An additional table which maps cameraid to actual MAC address of each cameras would be recommended for clairty.
+#By doing so, videodata table will be more flexible in terms of adding/deleting cameraid.
+#Only an update to the additional table will be needed to keep record of cameraids.
+
+#timestamp:
+#If videopath is NULL, timestamp will imply the state when a video does not exist.
+#If videopath is NOT NULL, timestamp will imply the time video was uploaded.
+
+#videopath:
+#videopath is an absolute path(max length 256bytes) to a video file taken by a camera.
+#If videopath is NULL, it could imply camera is malfunctioning so no videos were taken or video file itself is broken so it is unavailible to use.
+#Although this column should be unique, for multiple NULLs to exist in the table, there won't be any further constraints to this column.
+
+#thumbpath:
+#thumbpath is an absolute path(max length 256bytes) to a thumbnail image file taken from a video.
+#If thumbpath is NULL, there may not be thumbnail not availble for a video.
+
+#hashbin:
+#SHA-256 generates a 256-bit(32BYTES) binary hash value. 
+#Although for 900 files input, it is highly unlikely for hash collision to occur but for the sake of flexibility, there will be no constraints for hashed values.  
+#There may be or may not be a hash value depending on the availiability of video.
+
+#2. Table imagedata keeps record of screenshots which were taken from a video
+CREATE TABLE imagedata(
+	hashbin BINARY(32) NOT NULL,                                   
+    imagepath VARCHAR(256),                                                    
+	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+#hashbin: 
+#For the purpose of this table, hashbin should not be null nor unique. There may be multiple screenshots taken from a single video.
+#"imagedata" table should keep record which is referring to a particular video (=hashbin)
+
+#imagepath: 
+#A video may or may not have a screeenshot, or it could have multiple screenshots of a same video, sharing a common hashbin.
+#An image here is considered as a screenshot of a video from "videodata" table. imagepath is referring to the actual path of the screenshot. 
+#imagepath has flexibility to store NULL as its value (no screenshots for a video).
+
+#timestamp:
+#If imagepath is NULL, timestamp will imply the state when a video did not contain any screenshots.
+#If imagepath is NOT NULL, timestamp will imply the time when screenshot was taken from the video.

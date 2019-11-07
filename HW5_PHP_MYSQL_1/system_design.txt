@@ -1,0 +1,31 @@
+Backend (PHP)
+
+- Read string input, store it in "Name"
+  -> sanitize user input
+- Read uploaded file contents, store it in "Content"
+  -> sanitize global variable
+  -> allow TXT file type only
+- Print contents of DB
+  -> Query db (select *...)
+- When db error occurs, load a puppy image.
+
+ 
+
+Webpage (HTML)
+
+- User file upload (TXT only)
+- User STRING input (text box)
+- Print contents of the database
+  -> works in first load
+  -> name + content
+
+Database (MYSQL)
+
+- Create database "hw5"
+- Create User (not root)
+  -> Grant all privilleges
+- Create table "contacts"
+  -> ID (Primary key, INT, auto increase)
+  -> Name (String, variable length (~30))
+  -> Content (String, variable lenght (~255))
+  -> Timestamp
