@@ -1,0 +1,13 @@
+CREATE DATABASE midterm2;
+USE midterm2;
+GRANT ALL PRIVILEGES ON midterm2.* TO 'devteamlead'@'localhost' IDENTIFIED BY 'dev';
+
+CREATE TABLE Admin(
+	Username VARCHAR(30) NOT NULL PRIMARY KEY,
+    Password CHAR(32) NOT NULL,
+    Salt VARCHAR(10) NOT NULL
+);
+CREATE TABLE Malware(
+    Name VARCHAR(40) NOT NULL,
+    Signature CHAR(20) NOT NULL UNIQUE
+);
